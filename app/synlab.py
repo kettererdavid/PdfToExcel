@@ -7,10 +7,11 @@ def synpage1(input_path):
     page1 = tabula.read_pdf(input_path, pages="1", area=area)
     page1 = page1[0]
     page1.rename(columns={'Unnamed: 0': 'Alles'}, inplace=True)
+    page1['Alles'] = page1['Alles'].astype(str).apply(lambda x: x.split('\r')[0])
     page1['Ergebnis'] = page1['Alles'].str.extract(r'(\d+\.\d+|\d+)')
-    pattern = r'[^a-zA-Z^äöüÄÖÜ]'
+    pattern = r'[^a-zA-ZäöüÄÖÜßα().^ -]'
     page1['Untersuchung'] = page1['Alles'].str.replace(pattern, '', regex=True)
-    page1 = page1.dropna(how='all')
+    page1 = page1.dropna(subset=['Ergebnis'])
     return page1[['Untersuchung', 'Ergebnis']]
 
 
@@ -21,14 +22,16 @@ def synpage2(input_path):
         page1 = tabula.read_pdf(input_path, pages="2", area=area)
         page1 = page1[0]
         page1.rename(columns={'Unnamed: 0': 'Alles'}, inplace=True)
+        page1['Alles'] = page1['Alles'].astype(str).apply(lambda x: x.split('\r')[0])
         page1['Ergebnis'] = page1['Alles'].str.extract(r'(\d+\.\d+|\d+)')
-        pattern = r'[^a-zA-Z^äöüÄÖÜ]'
+        pattern = r'[^a-zA-ZäöüÄÖÜßα().^ -]'
         page1['Untersuchung'] = page1['Alles'].str.replace(pattern, '', regex=True)
         page1 = page1.dropna(how='all')
         page1 = page1[['Untersuchung', 'Ergebnis']]
         return page1.dropna(subset=['Ergebnis'])
     else:
         return DataFrame({})
+
 
 def synpage3(input_path):
     pdf_info = tabula.read_pdf(input_path, pages='all', multiple_tables=True, stream=True, output_format='json')
@@ -37,8 +40,9 @@ def synpage3(input_path):
         page1 = tabula.read_pdf(input_path, pages="3", area=area)
         page1 = page1[0]
         page1.rename(columns={'Unnamed: 0': 'Alles'}, inplace=True)
+        page1['Alles'] = page1['Alles'].astype(str).apply(lambda x: x.split('\r')[0])
         page1['Ergebnis'] = page1['Alles'].str.extract(r'(\d+\.\d+|\d+)')
-        pattern = r'[^a-zA-Z^äöüÄÖÜ]'
+        pattern = r'[^a-zA-ZäöüÄÖÜßα().^ -]'
         page1['Untersuchung'] = page1['Alles'].str.replace(pattern, '', regex=True)
         page1 = page1.dropna(how='all')
         page1 = page1[['Untersuchung', 'Ergebnis']]
