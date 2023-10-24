@@ -1,5 +1,6 @@
 import tabula
 import re
+from pandas import DataFrame
 
 
 def convert_exp(value):
@@ -40,14 +41,19 @@ def enteropage1(input_path):
 
 
 def enteropage2(input_path):
-    area = [300, 60, 638, 210]
-    page2 = tabula.read_pdf(input_path, pages="2", area=area)
-    page2 = page2[0]
-    page2['Untersuchung'] = page2['VERDAUUNGSPARAME'].str.extract(r'^(.*?)(?:\.{2,})')
-    page2['Ergebnis'] = page2['VERDAUUNGSPARAME'].str.extract(r'\.{2,}(.*)$')
-    page2 = page2[['Untersuchung', 'Ergebnis']]
+    pdf_info = tabula.read_pdf(input_path, pages='all', multiple_tables=True, stream=True, output_format='json')
+    if len(pdf_info) > 1:
 
-    return page2.dropna()
+        area = [300, 60, 638, 210]
+        page2 = tabula.read_pdf(input_path, pages="2", area=area)
+        page2 = page2[0]
+        page2['Untersuchung'] = page2['VERDAUUNGSPARAME'].str.extract(r'^(.*?)(?:\.{2,})')
+        page2['Ergebnis'] = page2['VERDAUUNGSPARAME'].str.extract(r'\.{2,}(.*)$')
+        page2 = page2[['Untersuchung', 'Ergebnis']]
+
+        return page2.dropna()
+    else:
+        return DataFrame({})
 
 
 def enteroname(input_path):
