@@ -11,33 +11,33 @@ def convert_exp(value):
             base = match.group(1)
             exponent = match.group(2)
             # Replace the original '10xx' pattern with '10^xx' in the value
-            return value.replace(f"{base}{exponent}", f"({base}**{exponent})")
+            return '=' + value.replace(f"{base}{exponent}", f"({base}**{exponent})")
     return value
 
 
 def enteropage1(input_path):
-    area = [300, 52, 616, 347]
+    area = [290, 131, 616, 347]
     page1 = tabula.read_pdf(input_path, pages="1", area=area)
     page1 = page1[0]
-    page1.rename(columns={'Aerobe Flora': 'Untersuchung', 'Unnamed: 1': 'Ergebnis'}, inplace=True)
-    page1 = page1[['Untersuchung', 'Ergebnis']]
+    page1.rename(columns={'RA': 'Untersuchung', 'Unnamed: 0': 'Ergebnis'}, inplace=True)
+
     page1["Ergebnis"] = page1["Ergebnis"].str.replace('.', '*')
+    page1["Ergebnis"] = page1["Ergebnis"].str.replace('<', '')
+    page1["Ergebnis"] = page1["Ergebnis"].str.lstrip()
     page1['Ergebnis'] = page1['Ergebnis'].apply(convert_exp)
 
-    # Move Stuhl ph result to result column
-    index1 = page1[page1['Untersuchung'] == 'Stuhl-pH'].index[0]
-    page1.at[index1, 'Ergebnis'] = page1.at[index1 + 1, 'Untersuchung']
-    page1.drop(index1 + 1, inplace=True)
-    page1.reset_index(drop=True, inplace=True)
+    index1 = page1[page1['Untersuchung'] == 'Schimmelpilze'].index[0]
+    erg = page1.at[index1 + 1, 'Untersuchung']
+    page1.at[index1 + 1, 'Untersuchung'] = 'Stuhl-pH'
+    page1.at[index1 + 1, 'Ergebnis'] = erg
 
-    # Move Intestinale Ökobilanz Result to result column
-    index2 = page1[page1['Untersuchung'] == 'Intestinale Ökobilanz'].index[0]
+    index2 = page1[page1['Untersuchung'] == 'bilanz'].index[0]
+    page1.at[index2, 'Untersuchung'] = 'Intestinale Ökobilanz'
     page1.at[index2, 'Ergebnis'] = page1.at[index2 + 1, 'Untersuchung']
-    page1.drop(index2 + 1, inplace=True)
-    page1.reset_index(drop=True, inplace=True)
-    page1 = page1.replace(['', '\-\-\-', '\+\+\+', '\(\-\)', '\(\+\)', '\+', '\-'], '', regex=True)
 
-    return page1.dropna()
+    page1.at[index2, 'Ergebnis'] = page1.at[index2, 'Ergebnis'][:2]
+    page1.drop(index2 + 1, inplace=True)
+    return page1
 
 
 def enteropage2(input_path):
@@ -49,6 +49,7 @@ def enteropage2(input_path):
         page2 = page2[0]
         page2['Untersuchung'] = page2['VERDAUUNGSPARAME'].str.extract(r'^(.*?)(?:\.{2,})')
         page2['Ergebnis'] = page2['VERDAUUNGSPARAME'].str.extract(r'\.{2,}(.*)$')
+        page2['Ergebnis'] = page2['Ergebnis'].str.replace('>', '')
         page2 = page2[['Untersuchung', 'Ergebnis']]
 
         return page2.dropna()
