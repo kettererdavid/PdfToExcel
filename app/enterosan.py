@@ -26,7 +26,7 @@ def enteropage1(input_path):
     page1["Ergebnis"] = page1["Ergebnis"].str.lstrip()
     page1['Ergebnis'] = page1['Ergebnis'].apply(convert_exp)
 
-    index1 = page1[page1['Untersuchung'] == 'Schimmelpilze'].index[0]
+    index1 = page1[page1['Untersuchung'] == 'Andere Pilze'].index[0]
     erg = page1.at[index1 + 1, 'Untersuchung']
     page1.at[index1 + 1, 'Untersuchung'] = 'Stuhl-pH'
     page1.at[index1 + 1, 'Ergebnis'] = erg
@@ -47,9 +47,10 @@ def enteropage2(input_path):
         area = [300, 60, 638, 210]
         page2 = tabula.read_pdf(input_path, pages="2", area=area)
         page2 = page2[0]
-        page2['Untersuchung'] = page2['VERDAUUNGSPARAME'].str.extract(r'^(.*?)(?:\.{2,})')
-        page2['Ergebnis'] = page2['VERDAUUNGSPARAME'].str.extract(r'\.{2,}(.*)$')
+        page2['Untersuchung'] = page2.iloc[:, 0].astype(str).str.extract(r'^(.*?)(?:\.{2,})')
+        page2['Ergebnis'] = page2.iloc[:, 0].astype(str).str.extract(r'\.{2,}(.*)$')
         page2['Ergebnis'] = page2['Ergebnis'].str.replace('>', '')
+        page2['Ergebnis'] = page2['Ergebnis'].str.replace('<', '')
         page2 = page2[['Untersuchung', 'Ergebnis']]
 
         return page2.dropna()
