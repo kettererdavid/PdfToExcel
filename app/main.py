@@ -41,7 +41,7 @@ def upload_file():
         file_stream2 = BytesIO(file2.read())
         df2 = pd.concat([testperson, enteropage1(file_stream2), enteropage2(file_stream2)],
                         axis=0)
-        df2.to_excel(writer, sheet_name='Enterosan', index=False)
+        df2.to_excel(writer, sheet_name='Synlab', index=False)
         writer.close()
         output.seek(0)
         return send_file(output, as_attachment=True, download_name=f'Enterosan{enteroname(file_stream2).columns[0]}.xlsx', mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
@@ -53,7 +53,7 @@ def upload_file():
         writer = pd.ExcelWriter(output, engine='xlsxwriter')
         file_stream3 = BytesIO(file3.read())
         df3 = pd.concat([testperson, censa1(file_stream3)], axis=0)
-        df3.to_excel(writer, sheet_name='Censa', index=False)
+        df3.to_excel(writer, sheet_name='Synlab', index=False)
         writer.close()
         output.seek(0)
         return send_file(output, as_attachment=True, download_name='Censa.xlsx',
@@ -67,7 +67,7 @@ def upload_file():
         file_stream4 = BytesIO(file4.read())
         df4 = pd.concat([testperson, micro1(file_stream4), micro2(file_stream4)],
                         axis=0)
-        df4.to_excel(writer, sheet_name='Microtrace', index=False)
+        df4.to_excel(writer, sheet_name='Synlab', index=False)
         writer.close()
         output.seek(0)
         return send_file(output, as_attachment=True, download_name=f'Microtrace {microname(file_stream4)}.xlsx',
@@ -80,7 +80,7 @@ def upload_file():
         writer = pd.ExcelWriter(output, engine='xlsxwriter')
         file_stream6 = BytesIO(file6.read())
         df6 = pd.concat([testperson, nutri1(file_stream6)], axis=0)
-        df6.to_excel(writer, sheet_name='Nutriplus', index=False)
+        df6.to_excel(writer, sheet_name='Synlab', index=False)
         writer.close()
         output.seek(0)
         return send_file(output, as_attachment=True, download_name=f'Nutriplus.xlsx',
