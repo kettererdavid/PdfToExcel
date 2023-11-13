@@ -26,7 +26,7 @@ def upload_file():
         output = BytesIO()
         writer = pd.ExcelWriter(output, engine='xlsxwriter')
         file_stream1 = BytesIO(file1.read())
-        df1 = pd.concat([synname(file_stream1), synpage1(file_stream1), synpage2(file_stream1),
+        df1 = pd.concat([testperson, synpage1(file_stream1), synpage2(file_stream1),
                          synpage3(file_stream1)], axis=0)
         df1.to_excel(writer, sheet_name='Synlab', index=False)
         writer.close()
@@ -39,7 +39,7 @@ def upload_file():
         output = BytesIO()
         writer = pd.ExcelWriter(output, engine='xlsxwriter')
         file_stream2 = BytesIO(file2.read())
-        df2 = pd.concat([enteroname(file_stream2), enteropage1(file_stream2), enteropage2(file_stream2)],
+        df2 = pd.concat([testperson, enteropage1(file_stream2), enteropage2(file_stream2)],
                         axis=0)
         df2.to_excel(writer, sheet_name='Enterosan', index=False)
         writer.close()
