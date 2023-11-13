@@ -11,6 +11,8 @@ from io import BytesIO
 APP = Flask(__name__)
 ALLOWED_EXTENSIONS = {'pdf'}
 
+testperson = pd.DataFrame(columns=['Testperson 1'])
+
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -50,7 +52,7 @@ def upload_file():
         output = BytesIO()
         writer = pd.ExcelWriter(output, engine='xlsxwriter')
         file_stream3 = BytesIO(file3.read())
-        df3 = censa1(file_stream3)
+        df3 = pd.concat([testperson, censa1(file_stream3)], axis=0)
         df3.to_excel(writer, sheet_name='Censa', index=False)
         writer.close()
         output.seek(0)
@@ -63,7 +65,7 @@ def upload_file():
         output = BytesIO()
         writer = pd.ExcelWriter(output, engine='xlsxwriter')
         file_stream4 = BytesIO(file4.read())
-        df4 = pd.concat([micro1(file_stream4), micro2(file_stream4)],
+        df4 = pd.concat([testperson, micro1(file_stream4), micro2(file_stream4)],
                         axis=0)
         df4.to_excel(writer, sheet_name='Microtrace', index=False)
         writer.close()
@@ -77,7 +79,7 @@ def upload_file():
         output = BytesIO()
         writer = pd.ExcelWriter(output, engine='xlsxwriter')
         file_stream6 = BytesIO(file6.read())
-        df6 = nutri1(file_stream6)
+        df6 = pd.concat([testperson, nutri1(file_stream6)], axis=0)
         df6.to_excel(writer, sheet_name='Nutriplus', index=False)
         writer.close()
         output.seek(0)
