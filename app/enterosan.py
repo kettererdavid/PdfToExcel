@@ -11,7 +11,7 @@ def convert_exp(value):
             base = match.group(1)
             exponent = match.group(2)
             # Replace the original '10xx' pattern with '10^xx' in the value
-            return '=' + value.replace(f"{base}{exponent}", f"({base}**{exponent})")
+            return '=' + value.replace(f"{base}{exponent}", f"({base}**{int(exponent)-1})")
     return value
 
 
