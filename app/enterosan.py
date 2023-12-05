@@ -26,17 +26,16 @@ def enteropage1(input_path):
     page1["Ergebnis"] = page1["Ergebnis"].str.lstrip()
     page1['Ergebnis'] = page1['Ergebnis'].apply(convert_exp)
 
-    index1 = page1[page1['Untersuchung'] == 'Andere Pilze'].index[0]
-    erg = page1.at[index1 + 1, 'Untersuchung']
-    page1.at[index1 + 1, 'Untersuchung'] = 'Stuhl-pH'
-    page1.at[index1 + 1, 'Ergebnis'] = erg
+    page1.iloc[-3, 1] = page1.iloc[-3, 0]
+    page1.iloc[-3, 0] = 'Stuhl-pH'
 
-    index2 = page1[page1['Untersuchung'] == 'bilanz'].index[0]
-    page1.at[index2, 'Untersuchung'] = 'Intestinale Ökobilanz'
-    page1.at[index2, 'Ergebnis'] = page1.at[index2 + 1, 'Untersuchung']
+    # Delete the second to last row
+    page1 = page1.drop(page1.index[-2])
 
-    page1.at[index2, 'Ergebnis'] = page1.at[index2, 'Ergebnis'][:2]
-    page1.drop(index2 + 1, inplace=True)
+    # Move the entry in column '1' to column '2' in the last row and add 'text2' to column '1'
+    page1.iloc[-1, 1] = page1.iloc[-1, 0][:2]
+    page1.iloc[-1, 0] = 'Intestinale Ökobilanz'
+
     return page1
 
 
